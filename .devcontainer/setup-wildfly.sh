@@ -8,6 +8,8 @@ done
 
 echo "Wildfly started. Configuring Datasource..."
 
+echo "Configuring Datasource..."
+
 # 1. Télécharger le driver PostgreSQL (si pas déjà présent)
 if [ ! -f /tmp/postgresql.jar ]; then
     curl -L -o /tmp/postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.7.8.jar
@@ -52,5 +54,15 @@ data-source add \
     --max-pool-size=20
 
 EOF
+
+echo "Création de l'utilisateur usertpjee..."
+
+# Vérifie si l'utilisateur existe déjà pour éviter une erreur (optionnel mais propre)
+if ! grep -q "^usertpjee=" /opt/jboss/wildfly/standalone/configuration/mgmt-users.properties; then
+    /opt/jboss/wildfly/bin/add-user.sh -u usertpjee -p 'Password123!' --silent
+    echo "Utilisateur 'usertpjee' créé avec succès."
+else
+    echo "L'utilisateur 'usertpjee' existe déjà."
+fi
 
 echo "Configuration terminée !"

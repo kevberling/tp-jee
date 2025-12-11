@@ -21,7 +21,7 @@ services:
 
   # Le serveur d'application
   wildfly:
-    image: quay.io/wildfly/wildfly:30.0.0.Final-jdk21
+    image: quay.io/wildfly/wildfly:38.0.0.Final-jdk21
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -30,10 +30,16 @@ services:
       # Monte le script de configuration qu'on va créer
       - ./setup-wildfly.sh:/opt/jboss/wildfly/bin/setup-wildfly.sh
       # Astuce : On monte le dossier target de votre module EAR directement dans le déploiement
-      # Adaptez le chemin './server-module/target/...' selon votre structure exacte
       - ../jee-with-ejb-server/jee-with-ejb-ear/target:/opt/jboss/wildfly/standalone/deployments/
     # On ouvre les ports pour qu'ils soient accessibles depuis le navigateur
     ports:
       - "8080:8080"
       - "9990:9990"
       - "5432:5432"
+    command: >
+      /bin/sh -c "
+      sed -i '/^usertpjee=/d' /opt/jboss/wildfly/standalone/configuration/mgmt-users.properties &&
+      sed -i '/^usertpjee=/d' /opt/jboss/wildfly/standalone/configuration/mgmt-groups.properties &&
+      /opt/jboss/wildfly/bin/add-user.sh -u usertpjee -p 'Password123!' -g Administrator,SuperUser --silent &&
+      /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
+      "

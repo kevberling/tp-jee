@@ -17,7 +17,10 @@
     }
   },
 
-  // Ports à transférer pour que l'étudiant puisse voir le site web
+  // TRES IMPORTANT : On dit à VS Code d'être l'utilisateur vscode
+	"remoteUser": "vscode",
+
+  // Ports à transférer pour voir le site web
   "forwardPorts": [8080, 9990],
 
   // Une fois le conteneur créé, on lance la config Wildfly en arrière-plan

@@ -1,0 +1,6 @@
+{
+    "maven.view": "hierarchical",
+    "maven.executable.path": "/usr/bin/mvn",
+    "maven.executable.preferMavenWrapper": false,
+    "java.configuration.updateBuildConfiguration": "automatic"
+}
