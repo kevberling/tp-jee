@@ -1,0 +1,25 @@
+{
+  "name": "TP J2EE Project Environment",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // Configure VS Code
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.java",
+        "vscjava.vscode-java-debug",
+        "vscjava.vscode-maven",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-java-test"
+      ]
+    }
+  },
+
+  // Ports à transférer pour que l'étudiant puisse voir le site web
+  "forwardPorts": [8080, 9990],
+
+  // Une fois le conteneur créé, on lance la config Wildfly en arrière-plan
+  "postStartCommand": "nohup docker exec $(docker ps -qf name=wildfly) /bin/bash /opt/jboss/wildfly/bin/setup-wildfly.sh > /tmp/setup.log 2>&1 &"
+}
