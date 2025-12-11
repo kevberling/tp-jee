@@ -14,15 +14,43 @@ if [ ! -f /tmp/postgresql.jar ]; then
 fi
 
 # 2. Commandes CLI pour installer le driver et la datasource
+# On utilise "try-catch" implicite ou on ignore les erreurs si le module existe déjà pour éviter de bloquer le redémarrage
 /opt/jboss/wildfly/bin/jboss-cli.sh -c <<EOF
-# Ajouter le module module driver
-module add --name=org.postgres --resources=/tmp/postgresql.jar --dependencies=javax.api,javax.transaction.api
 
-# Enregistrer le driver
-/subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)
+# 1. Ajouter le module (si pas déjà fait)
+# On essaie d'ajouter, si ça échoue (car existe déjà), ce n'est pas grave pour un script de dev
+try
+    module add --name=org.postgres --resources=/tmp/postgresql.jar --dependencies=javax.api,javax.transaction.api
+catch
+    echo "Module org.postgres existe peut-être déjà"
+end-try
 
-# Créer la Datasource
-data-source add --name=PostgresDS --jndi-name=java:/PostgresDS --driver-name=postgres --connection-url=jdbc:postgresql://localhost:5432/j2ee_db --user-name=j2ee --password=password --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter
+# 2. Enregistrer le driver
+try
+    /subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)
+catch
+    echo "Driver postgres existe peut-être déjà"
+end-try
+
+# 3. Créer la Datasource
+# On supprime l'ancienne si elle existe pour être sûr d'avoir la bonne config (optionnel mais propre pour le dev)
+if (outcome == success) of /subsystem=datasources/data-source=TPJeebddDS:read-resource
+    data-source remove --name=TPJeebddDS
+end-if
+
+data-source add \
+    --name=TPJeebddDS \
+    --jndi-name=java:/tpjeebdd \
+    --driver-name=postgres \
+    --connection-url=jdbc:postgresql://db:5432/tpjeebdd \
+    --user-name=postgres \
+    --password=postgres \
+    --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker \
+    --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter \
+    --background-validation=true \
+    --min-pool-size=5 \
+    --max-pool-size=20
+
 EOF
 
 echo "Configuration terminée !"

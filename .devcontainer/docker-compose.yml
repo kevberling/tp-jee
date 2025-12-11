@@ -14,24 +14,24 @@ services:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_USER: j2ee
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: j2ee_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tpjeebdd
     network_mode: service:wildfly # Partage le réseau (localhost accessible)
 
   # Le serveur d'application
   wildfly:
     image: quay.io/wildfly/wildfly:30.0.0.Final-jdk21
     environment:
-      - POSTGRES_USER=j2ee
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - DB_HOST=localhost
     volumes:
       # Monte le script de configuration qu'on va créer
       - ./setup-wildfly.sh:/opt/jboss/wildfly/bin/setup-wildfly.sh
       # Astuce : On monte le dossier target de votre module EAR directement dans le déploiement
       # Adaptez le chemin './server-module/target/...' selon votre structure exacte
-      - ../server-module/target:/opt/jboss/wildfly/standalone/deployments/
+      - ../jee-with-ejb-server/jee-with-ejb-ear/target:/opt/jboss/wildfly/standalone/deployments/
     # On ouvre les ports pour qu'ils soient accessibles depuis le navigateur
     ports:
       - "8080:8080"
