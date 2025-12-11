@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>jee-with-ejb-server</artifactId>
+        <groupId>fr.ig2i</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>jee-with-ejb-ear</artifactId>
+    <packaging>ear</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.ig2i</groupId>
+            <artifactId>jee-with-ejb-war</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>fr.ig2i</groupId>
+            <artifactId>jee-with-ejb-jar</artifactId>
+            <version>${project.version}</version>
+            <type>ejb</type>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <!-- https://maven.apache.org/plugins/maven-ear-plugin/index.html -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <!-- Tell Maven we are using Java EE -->
+                    <version>8</version>
+                    <!-- Use Java EE ear libraries as needed. Java EE ear libraries
+                        are in easy way to package any libraries needed in the ear, and automatically
+                        have any modules (EJB-JARs and WARs) use them -->
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <skinnyWars>true</skinnyWars>
+                    <modules>
+                        <webModule>
+                            <groupId>fr.ig2i</groupId>
+                            <artifactId>jee-with-ejb-war</artifactId>
+                            <bundleFileName>jee-with-ejb-war-${project.version}.war</bundleFileName>
+                            <contextRoot>/jee</contextRoot>
+                        </webModule>
+                        <ejbModule>
+                            <groupId>fr.ig2i</groupId>
+                            <artifactId>jee-with-ejb-jar</artifactId>
+                            <bundleFileName>jee-with-ejb-jar-${project.version}.jar</bundleFileName>
+                        </ejbModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

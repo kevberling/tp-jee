@@ -1,0 +1,30 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+                        http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+    <display-name>Archetype Created Web Application</display-name>
+         
+    <env-entry>
+        <env-entry-name>java:jboss/exported/homepagelabel</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>Hello World</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>java:global/hello</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>Hello Kévin Berling</env-entry-value>
+    </env-entry>
+
+ 	<servlet>
+		<description></description>
+		<display-name>Bienvenue</display-name>
+		<servlet-name>HelloServlet</servlet-name>
+		<servlet-class>fr.ig2i.jndi.HelloServlet</servlet-class>
+		
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>HelloServlet</servlet-name>
+		<url-pattern>/Accueil</url-pattern>
+	</servlet-mapping>
+</web-app>
